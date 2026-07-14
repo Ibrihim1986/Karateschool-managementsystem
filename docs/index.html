@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Karate School Management System</title>
+<meta name="description" content="An ASP.NET Core MVC + EF Core school management system for a karate dojo: students, instructors, classes, attendance, belt promotions, payments." />
+<style>
+  :root {
+    --bg: #0b0d12;
+    --bg-elevated: #12151c;
+    --text: #e8ebf1;
+    --text-dim: #a3aab8;
+    --accent: #e0523f;
+    --accent-dim: #7a2c22;
+    --border: #232733;
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f7f6f3;
+      --bg-elevated: #ffffff;
+      --text: #1c1e24;
+      --text-dim: #5b6270;
+      --accent: #c9432f;
+      --accent-dim: #f3d9d4;
+      --border: #e5e3dd;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b0d12; --bg-elevated: #12151c; --text: #e8ebf1; --text-dim: #a3aab8;
+    --accent: #e0523f; --accent-dim: #7a2c22; --border: #232733;
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f6f3; --bg-elevated: #ffffff; --text: #1c1e24; --text-dim: #5b6270;
+    --accent: #c9432f; --accent-dim: #f3d9d4; --border: #e5e3dd;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+  header.hero { padding: 96px 0 56px; text-align: center; }
+  .badge {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+  }
+  h1 { font-size: clamp(2rem, 5vw, 3rem); margin: 0 0 16px; letter-spacing: -0.02em; }
+  .tagline { font-size: 1.15rem; color: var(--text-dim); max-width: 620px; margin: 0 auto; }
+  .cta-row { display: flex; gap: 12px; justify-content: center; margin-top: 32px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .btn:hover { transform: translateY(-1px); border-color: var(--accent); }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  section { padding: 40px 0; border-top: 1px solid var(--border); }
+  h2 { font-size: 1.5rem; margin-bottom: 24px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .card h3 { margin: 0 0 8px; font-size: 1rem; }
+  .card p { margin: 0; color: var(--text-dim); font-size: 0.92rem; }
+  .stack-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .pill {
+    font-size: 0.8rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  ul.rules { padding-left: 20px; color: var(--text-dim); }
+  ul.rules li { margin-bottom: 8px; }
+  ul.rules strong { color: var(--text); }
+  code {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-size: 0.88em;
+  }
+  pre {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+  }
+  footer { padding: 40px 0 80px; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
+  footer a { color: var(--text-dim); }
+  .note {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 16px 18px;
+    color: var(--text-dim);
+    font-size: 0.92rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="hero">
+    <span class="badge">School Assignment &middot; ASP.NET Core MVC</span>
+    <h1>Karate School Management System</h1>
+    <p class="tagline">
+      A code-first ASP.NET Core MVC + EF Core application for running a karate dojo:
+      student/instructor/administrator accounts, class scheduling, attendance,
+      belt promotions, and payments — built from a UML class diagram and ERD.
+    </p>
+    <div class="cta-row">
+      <a class="btn primary" href="https://github.com/Ibrihim1986/Karateschool-managementsystem">View source on GitHub</a>
+      <a class="btn" href="https://github.com/Ibrihim1986/Karateschool-managementsystem#readme">Read the docs</a>
+    </div>
+  </header>
+
+  <section>
+    <div class="note">
+      This page is a static project overview. GitHub Pages can't run the app itself
+      (no server, no database) — the live app is deployed separately.
+    </div>
+  </section>
+
+  <section>
+    <h2>Tech stack</h2>
+    <div class="stack-row">
+      <span class="pill">ASP.NET Core MVC (.NET 8)</span>
+      <span class="pill">EF Core, Code-First</span>
+      <span class="pill">SQLite / SQL Server</span>
+      <span class="pill">Custom cookie auth (PBKDF2)</span>
+      <span class="pill">xUnit</span>
+      <span class="pill">GitHub Actions CI</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Architecture highlights</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Domain model</h3>
+        <p>Abstract <code>User</code> base class with <code>Student</code>, <code>Instructor</code>,
+        and <code>Administrator</code> subclasses mapped via EF Core table-per-type inheritance,
+        matching the source ERD's shared-key design.</p>
+      </div>
+      <div class="card">
+        <h3>Design patterns</h3>
+        <p><code>UserFactory</code> centralizes account creation (Factory pattern);
+        <code>IRepository&lt;T&gt;</code> / <code>UserRepository</code> centralize data access
+        and enforce one-account-per-email (Repository pattern).</p>
+      </div>
+      <div class="card">
+        <h3>Interfaces</h3>
+        <p><code>IAttendanceTrackable</code>, <code>IPayable</code>, and <code>IReportable</code>
+        express cross-cutting student/admin capabilities independent of the class hierarchy.</p>
+      </div>
+      <div class="card">
+        <h3>Custom authentication</h3>
+        <p>Cookie-based auth built on ASP.NET Core's cookie middleware (not Identity),
+        with PBKDF2 password hashing, account lockout, and sliding session expiration.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Business rules enforced</h2>
+    <ul class="rules">
+      <li><strong>Duplicate accounts</strong> — each email may only be associated with one User.</li>
+      <li><strong>Minors</strong> — students under 18 require a guardian/emergency contact on file.</li>
+      <li><strong>Account lockout</strong> — 5 consecutive failed logins locks the account for 15 minutes.</li>
+      <li><strong>Sessions</strong> — expire after 30 minutes of inactivity (sliding cookie expiration).</li>
+      <li><strong>Attendance</strong> — cannot be recorded for a future date.</li>
+      <li><strong>Scheduling</strong> — a class can't exceed capacity, and a room or instructor can't be double-booked in the same time slot.</li>
+      <li><strong>Belt promotions</strong> — instructor recommendations require justification notes and administrator approval before becoming final.</li>
+      <li><strong>Passwords</strong> — minimum complexity policy, hashed with PBKDF2, never stored or transmitted in plain text.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Run it locally</h2>
+    <pre><code>git clone https://github.com/Ibrihim1986/Karateschool-managementsystem.git
+cd Karateschool-managementsystem
+dotnet run --project src/KarateSchool.Web</code></pre>
+    <p style="color: var(--text-dim); font-size: 0.9rem;">
+      The database is created and seeded automatically on first run (SQLite by default).
+    </p>
+  </section>
+
+  <footer>
+    <p>Built with ASP.NET Core &middot; <a href="https://github.com/Ibrihim1986/Karateschool-managementsystem">github.com/Ibrihim1986/Karateschool-managementsystem</a></p>
+  </footer>
+</div>
+
+</body>
+</html>

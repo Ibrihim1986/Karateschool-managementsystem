@@ -2,9 +2,17 @@ using KarateSchool.Web.Data;
 using KarateSchool.Web.Repositories;
 using KarateSchool.Web.Services.Auth;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Hosts like Render assign the listen port dynamically via $PORT.
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(port))
+{
+    builder.WebHost.UseUrls($"http://+:{port}");
+}
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -55,6 +63,17 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+// Render (and most PaaS hosts) terminate TLS at a reverse proxy and forward plain HTTP;
+// trust the forwarded headers so HTTPS redirection and secure cookies behave correctly.
+// The proxy's IP isn't fixed, so clear the known-networks/proxies allowlist to trust it.
+var forwardedHeadersOptions = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+};
+forwardedHeadersOptions.KnownNetworks.Clear();
+forwardedHeadersOptions.KnownProxies.Clear();
+app.UseForwardedHeaders(forwardedHeadersOptions);
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
