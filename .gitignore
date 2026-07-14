@@ -1,0 +1,18 @@
+## .NET
+bin/
+obj/
+*.user
+
+## SQLite runtime database
+*.db
+*.db-shm
+*.db-wal
+
+## VS / Rider
+.vs/
+.idea/
+*.suo
+
+## OS
+.DS_Store
+Thumbs.db
