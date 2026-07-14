@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: write
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -25,5 +28,30 @@ jobs:
       - name: Build
         run: dotnet build KarateSchool.sln --no-restore --configuration Release
 
-      - name: Test
-        run: dotnet test KarateSchool.sln --no-build --configuration Release --verbosity normal
+      - name: Test with coverage
+        run: >
+          dotnet test KarateSchool.sln --no-build --configuration Release --verbosity normal
+          --collect:"XPlat Code Coverage" --results-directory ./coverage-raw
+
+      - name: Generate coverage report
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          dotnet tool install --global dotnet-reportgenerator-globaltool
+          reportgenerator \
+            "-reports:coverage-raw/**/coverage.cobertura.xml" \
+            "-targetdir:docs/coverage" \
+            "-reporttypes:Html" \
+            "-title:KarateSchool.Web Coverage Report"
+
+      - name: Publish coverage report to GitHub Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/coverage
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update coverage report [skip ci]"
+            git push
+          else
+            echo "No coverage changes to commit."
+          fi

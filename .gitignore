@@ -8,6 +8,9 @@ obj/
 *.db-shm
 *.db-wal
 
+## Local coverage test-run output (docs/coverage HTML report is committed, this raw XML is not)
+coverage-raw/
+
 ## VS / Rider
 .vs/
 .idea/
