@@ -101,6 +101,27 @@ public class AuthServiceTests
     }
 
     [Fact]
+    public async Task RegisterStudentAsync_NullModel_ThrowsArgumentNullException()
+    {
+        var service = CreateService(out _);
+        await Assert.ThrowsAsync<ArgumentNullException>(() => service.RegisterStudentAsync(null!));
+    }
+
+    [Fact]
+    public async Task LoginAsync_EmptyEmail_ThrowsArgumentException()
+    {
+        var service = CreateService(out _);
+        await Assert.ThrowsAsync<ArgumentException>(() => service.LoginAsync("", "password"));
+    }
+
+    [Fact]
+    public async Task LoginAsync_EmptyPassword_ThrowsArgumentException()
+    {
+        var service = CreateService(out _);
+        await Assert.ThrowsAsync<ArgumentException>(() => service.LoginAsync("someone@example.com", ""));
+    }
+
+    [Fact]
     public async Task LoginAsync_SuccessfulLogin_ResetsFailedAttemptCounter()
     {
         var service = CreateService(out _);

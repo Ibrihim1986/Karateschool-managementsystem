@@ -22,4 +22,10 @@ public class PasswordPolicyTests
         var exception = Record.Exception(() => PasswordPolicy.Validate("Str0ng!Passw0rd"));
         Assert.Null(exception);
     }
+
+    [Fact]
+    public void Validate_NullPassword_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() => PasswordPolicy.Validate(null!));
+    }
 }

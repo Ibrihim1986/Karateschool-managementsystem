@@ -42,4 +42,50 @@ public class AttendanceTests
         Assert.Throws<ArgumentException>(() =>
             new Attendance(student, karateClass, DateTime.UtcNow.Date, "Maybe"));
     }
+
+    [Fact]
+    public void Constructor_NullStudent_ThrowsArgumentNullException()
+    {
+        var (_, karateClass) = CreateFixtures();
+        Assert.Throws<ArgumentNullException>(() =>
+            new Attendance(null!, karateClass, DateTime.UtcNow.Date, "Present"));
+    }
+
+    [Fact]
+    public void Constructor_NullKarateClass_ThrowsArgumentNullException()
+    {
+        var (student, _) = CreateFixtures();
+        Assert.Throws<ArgumentNullException>(() =>
+            new Attendance(student, null!, DateTime.UtcNow.Date, "Present"));
+    }
+
+    [Fact]
+    public void SetStatus_InvalidStatus_ThrowsArgumentException()
+    {
+        var (student, karateClass) = CreateFixtures();
+        var attendance = new Attendance(student, karateClass, DateTime.UtcNow.Date, "Present");
+
+        Assert.Throws<ArgumentException>(() => attendance.SetStatus("Invalid"));
+    }
+
+    [Fact]
+    public void SetStatus_EmptyStatus_ThrowsArgumentException()
+    {
+        var (student, karateClass) = CreateFixtures();
+        var attendance = new Attendance(student, karateClass, DateTime.UtcNow.Date, "Present");
+
+        Assert.Throws<ArgumentException>(() => attendance.SetStatus(""));
+    }
+
+    [Fact]
+    public void ToString_IncludesStudentIdAndStatus()
+    {
+        var (student, karateClass) = CreateFixtures();
+        var attendance = new Attendance(student, karateClass, DateTime.UtcNow.Date, "Present");
+
+        var text = attendance.ToString();
+
+        Assert.Contains(student.UserId.ToString(), text);
+        Assert.Contains("Present", text);
+    }
 }

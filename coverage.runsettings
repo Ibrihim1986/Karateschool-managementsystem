@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <!--
+            EF Core migrations and the model snapshot are tool-generated scaffolding
+            (created by `dotnet ef migrations add`), not hand-written application logic.
+            They are excluded from coverage the same way generated designer files are.
+          -->
+          <Exclude>[KarateSchool.Web]KarateSchool.Web.Data.Migrations.*</Exclude>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

@@ -60,4 +60,50 @@ public class BeltPromotionTests
 
         Assert.Throws<InvalidOperationException>(() => promotion.Approve());
     }
+
+    [Fact]
+    public void Constructor_NullStudent_ThrowsArgumentNullException()
+    {
+        var (_, instructor) = CreateFixtures();
+        Assert.Throws<ArgumentNullException>(() =>
+            new BeltPromotion(null!, instructor, "Blue Belt", DateTime.UtcNow.Date, "Notes"));
+    }
+
+    [Fact]
+    public void Constructor_NullInstructor_ThrowsArgumentNullException()
+    {
+        var (student, _) = CreateFixtures();
+        Assert.Throws<ArgumentNullException>(() =>
+            new BeltPromotion(student, null!, "Blue Belt", DateTime.UtcNow.Date, "Notes"));
+    }
+
+    [Fact]
+    public void Constructor_EmptyNewBelt_ThrowsArgumentException()
+    {
+        var (student, instructor) = CreateFixtures();
+        Assert.Throws<ArgumentException>(() =>
+            new BeltPromotion(student, instructor, "", DateTime.UtcNow.Date, "Notes"));
+    }
+
+    [Fact]
+    public void Constructor_FutureDate_ThrowsArgumentException()
+    {
+        var (student, instructor) = CreateFixtures();
+        Assert.Throws<ArgumentException>(() =>
+            new BeltPromotion(student, instructor, "Blue Belt", DateTime.UtcNow.Date.AddDays(1), "Notes"));
+    }
+
+    [Fact]
+    public void ToString_ReflectsApprovalState()
+    {
+        var (student, instructor) = CreateFixtures();
+        var promotion = new BeltPromotion(
+            student, instructor, "Blue Belt", DateTime.UtcNow.Date, "Great progress this term.");
+
+        Assert.Contains("Pending", promotion.ToString());
+
+        promotion.Approve();
+
+        Assert.Contains("Approved", promotion.ToString());
+    }
 }

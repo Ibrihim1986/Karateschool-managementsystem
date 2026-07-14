@@ -60,4 +60,42 @@ public class KarateClassTests
 
         Assert.False(karateClass.HasAvailableCapacity);
     }
+
+    [Fact]
+    public void Constructor_EmptyClassName_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new KarateClass("", "Mon 10:00", "Room 1", 10, CreateInstructor()));
+    }
+
+    [Fact]
+    public void Constructor_EmptySchedule_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new KarateClass("Class", "", "Room 1", 10, CreateInstructor()));
+    }
+
+    [Fact]
+    public void Constructor_EmptyRoom_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new KarateClass("Class", "Mon 10:00", "", 10, CreateInstructor()));
+    }
+
+    [Fact]
+    public void Enroll_NullEnrollment_ThrowsArgumentNullException()
+    {
+        var karateClass = new KarateClass("Class", "Mon 10:00", "Room 1", 10, CreateInstructor());
+        Assert.Throws<ArgumentNullException>(() => karateClass.Enroll(null!));
+    }
+
+    [Fact]
+    public void ToString_IncludesClassNameAndRoom()
+    {
+        var karateClass = new KarateClass("Class", "Mon 10:00", "Room 1", 10, CreateInstructor());
+        var text = karateClass.ToString();
+
+        Assert.Contains("Class", text);
+        Assert.Contains("Room 1", text);
+    }
 }

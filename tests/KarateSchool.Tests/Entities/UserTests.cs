@@ -98,4 +98,26 @@ public class UserTests
         Assert.Contains(user.FullName, text);
         Assert.Contains(user.Email, text);
     }
+
+    [Fact]
+    public void SetFullName_TooLong_ThrowsArgumentException()
+    {
+        var user = CreateValidInstructor();
+        var tooLong = new string('a', 151);
+        Assert.Throws<ArgumentException>(() => user.SetFullName(tooLong));
+    }
+
+    [Fact]
+    public void SetPhone_Empty_ThrowsArgumentException()
+    {
+        var user = CreateValidInstructor();
+        Assert.Throws<ArgumentException>(() => user.SetPhone(""));
+    }
+
+    [Fact]
+    public void SetRole_InvalidRole_ThrowsArgumentException()
+    {
+        var user = CreateValidInstructor();
+        Assert.Throws<ArgumentException>(() => user.SetRole("SuperUser"));
+    }
 }

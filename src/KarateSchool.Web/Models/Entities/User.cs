@@ -75,7 +75,7 @@ public abstract class User
         Phone = phone.Trim();
     }
 
-    private void SetRole(string role)
+    internal void SetRole(string role)
     {
         if (role is not ("Student" or "Instructor" or "Administrator"))
             throw new ArgumentException("Role must be Student, Instructor, or Administrator.", nameof(role));

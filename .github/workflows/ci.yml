@@ -31,6 +31,7 @@ jobs:
       - name: Test with coverage
         run: >
           dotnet test KarateSchool.sln --no-build --configuration Release --verbosity normal
+          --settings coverage.runsettings
           --collect:"XPlat Code Coverage" --results-directory ./coverage-raw
 
       - name: Generate coverage report

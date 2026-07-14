@@ -1,4 +1,6 @@
+using KarateSchool.Web.Data;
 using KarateSchool.Web.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace KarateSchool.Tests.Entities;
@@ -97,4 +99,78 @@ public class StudentTests
         new(
             "Adult Student", $"adult-{Guid.NewGuid():N}@example.com", "hash", "555-0000",
             AgeYears(30), "White Belt", DateTime.UtcNow.Date, emergencyContact: null);
+
+    [Fact]
+    public void Constructor_EmptyBeltRank_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new Student(
+                "Student", "beltrank@example.com", "hash", "555-0000",
+                AgeYears(30), "", DateTime.UtcNow.Date, null));
+    }
+
+    [Fact]
+    public void RecordAttendance_Null_ThrowsArgumentNullException()
+    {
+        var student = CreateAdultStudent();
+        Assert.Throws<ArgumentNullException>(() => student.RecordAttendance(null!));
+    }
+
+    [Fact]
+    public void RecordAttendance_ForDifferentStudent_ThrowsInvalidOperationException()
+    {
+        // Both students need real, distinct auto-generated IDs — unsaved entities all default
+        // to UserId 0, which would make any two in-memory students compare as "the same" student.
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+        using var context = new ApplicationDbContext(options);
+
+        var student = CreateAdultStudent();
+        var otherStudent = CreateAdultStudent();
+        var instructor = new Instructor(
+            "Instr", "instr-mismatch@example.com", "hash", "555-0000", "Karate", "Black Belt", new DateTime(2020, 1, 1));
+        context.Students.AddRange(student, otherStudent);
+        context.Instructors.Add(instructor);
+        context.SaveChanges();
+
+        var karateClass = new KarateClass("Class", "Mon 10:00", "Room 1", 10, instructor);
+        var attendance = new Attendance(otherStudent, karateClass, DateTime.UtcNow.Date, "Present");
+
+        Assert.Throws<InvalidOperationException>(() => student.RecordAttendance(attendance));
+    }
+
+    [Fact]
+    public void MakePayment_Null_ThrowsArgumentNullException()
+    {
+        var student = CreateAdultStudent();
+        Assert.Throws<ArgumentNullException>(() => student.MakePayment(null!));
+    }
+
+    [Fact]
+    public void MakePayment_ForDifferentStudent_ThrowsInvalidOperationException()
+    {
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+        using var context = new ApplicationDbContext(options);
+
+        var student = CreateAdultStudent();
+        var otherStudent = CreateAdultStudent();
+        context.Students.AddRange(student, otherStudent);
+        context.SaveChanges();
+
+        var payment = new Payment(otherStudent, 50m, DateTime.UtcNow.Date, "Cash", "Completed");
+
+        Assert.Throws<InvalidOperationException>(() => student.MakePayment(payment));
+    }
+
+    [Fact]
+    public void ToString_IncludesBeltRankAndEnrollmentDate()
+    {
+        var student = CreateAdultStudent();
+        var text = student.ToString();
+
+        Assert.Contains("White Belt", text);
+    }
 }

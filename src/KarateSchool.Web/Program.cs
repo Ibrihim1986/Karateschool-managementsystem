@@ -88,3 +88,8 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+/// <summary>Exposed so WebApplicationFactory&lt;Program&gt; can host this app in integration tests.</summary>
+public partial class Program
+{
+}

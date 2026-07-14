@@ -41,4 +41,35 @@ public class PasswordHasherTests
     {
         Assert.False(_hasher.VerifyPassword("anything", "not-a-valid-hash"));
     }
+
+    [Fact]
+    public void HashPassword_EmptyPassword_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() => _hasher.HashPassword(""));
+    }
+
+    [Fact]
+    public void VerifyPassword_EmptyPlainTextPassword_ReturnsFalse()
+    {
+        var hash = _hasher.HashPassword("Sup3r$ecret!");
+        Assert.False(_hasher.VerifyPassword("", hash));
+    }
+
+    [Fact]
+    public void VerifyPassword_EmptyHash_ReturnsFalse()
+    {
+        Assert.False(_hasher.VerifyPassword("anything", ""));
+    }
+
+    [Fact]
+    public void VerifyPassword_NonIntegerIterations_ReturnsFalse()
+    {
+        Assert.False(_hasher.VerifyPassword("anything", "not-a-number.c2FsdA==.aGFzaA=="));
+    }
+
+    [Fact]
+    public void VerifyPassword_MalformedBase64Segments_ReturnsFalse()
+    {
+        Assert.False(_hasher.VerifyPassword("anything", "100000.not-valid-base64!!!.also-not-valid!!!"));
+    }
 }
